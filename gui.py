@@ -1,22 +1,23 @@
 import os
-#import sys
+import sys
 import time
-#from datetime import datetime
-#import math
+from datetime import datetime
+import math
 from pathlib import Path
-#import numpy as np
-#import pandas as pd
-#import skimage as sk
-#from skimage import transform
-#from PIL import Image, ImageDraw, ImageFont, ImageTk
+import numpy as np
+import pandas as pd
+import skimage as sk
+from skimage import io as skio  # without this, the "scipy.special._cdflib" was not found by pyinstaller
+from skimage import transform
+from PIL import Image, ImageDraw, ImageFont, ImageTk
 import tkinter as tk
 from tkinter import filedialog, PhotoImage
-import multiprocessing as mp
 import czifile
+import multiprocessing as mp
 
 from czi2tiff import czi2tiff
 from nbt_intensity import nbt_intensity
-from utils import resource_path
+from utils import resource_path, imread
 
 use_cores = max(1, mp.cpu_count() - 2)
 img_type = (".jpg", ".jpeg", ".tif", ".tiff", ".png", ".bmp", ".czi")

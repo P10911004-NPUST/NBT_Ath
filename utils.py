@@ -1,21 +1,26 @@
 import os
 import sys
+import time
 from datetime import datetime
-from pathlib import Path
 import math
+from pathlib import Path
 import numpy as np
 import pandas as pd
 import skimage as sk
+from skimage import io as skio
 from skimage import transform
-from PIL import Image, ImageDraw, ImageFont
-import multiprocessing as mp
+from PIL import Image, ImageDraw, ImageFont, ImageTk
+import tkinter as tk
+from tkinter import filedialog, PhotoImage
 import czifile
+import multiprocessing as mp
 
 #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 # Read image
 #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 def imread(img_path):
     img_type = Path(img_path).suffix.lower()
+    print("img_type")
     if img_type == ".czi":
         img = czifile.imread(img_path)
         img = np.array(img, dtype = np.double)
@@ -25,11 +30,12 @@ def imread(img_path):
         RGB = RGB.astype(np.uint8)
         GRAY = np.mean(img, axis = 2)
     if img_type in (".tiff", ".tif", ".jpg", ".jpeg", ".png", ".bmp"):
-        img = sk.io.imread(img_path)
+        img = skio.imread(img_path)
+        print("sk.io.imread")
         if len(img.shape) == 2:
             '''the img shape is (height, width)'''
             #RGB = np.stack([img, img, img], axis = -1, dtype = np.uint8)
-            RGB = img
+            RGB = np.double(img)
             RGB = RGB / RGB.max() * 255.0 if RGB.max() > 0 else RGB
             RGB = np.uint8(RGB)
             GRAY = np.double(img)
