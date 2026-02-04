@@ -1,13 +1,14 @@
 import os
-import sys
+#import sys
 import time
-import math
+#from datetime import datetime
+#import math
 from pathlib import Path
-import numpy as np
-import pandas as pd
-import skimage as sk
-from skimage import transform
-from PIL import Image, ImageDraw, ImageFont, ImageTk
+#import numpy as np
+#import pandas as pd
+#import skimage as sk
+#from skimage import transform
+#from PIL import Image, ImageDraw, ImageFont, ImageTk
 import tkinter as tk
 from tkinter import filedialog, PhotoImage
 import multiprocessing as mp
@@ -15,24 +16,17 @@ import czifile
 
 from czi2tiff import czi2tiff
 from nbt_intensity import nbt_intensity
+from utils import resource_path
 
 use_cores = max(1, mp.cpu_count() - 2)
 img_type = (".jpg", ".jpeg", ".tif", ".tiff", ".png", ".bmp", ".czi")
 
-def resource_path(relative_path):
-    """ Get absolute path to resource (works for PyInstaller) """
-    try:
-        base_path = sys._MEIPASS
-    except Exception:
-        base_path = os.path.abspath(".")
-    return os.path.join(base_path, relative_path)
-
 
 def get_folder_path():
+    global input_folder_dir
     f = filedialog.askdirectory()
     folder_path.set(f)
     input_folder_dir = folder_path.get()
-
     file_list = Path(input_folder_dir).rglob("*")
     img_list = [i for i in file_list if i.is_file() and i.suffix.lower() in img_type]
     img_list = [str(i).replace("\\", "/") for i in img_list]
@@ -41,7 +35,7 @@ def get_folder_path():
 
 
 def czi_to_tiff():
-    input_folder_dir = folder_path.get()
+    #input_folder_dir = folder_path.get()
     output_folder_dir = f"{os.path.dirname(input_folder_dir)}/OUT_{os.path.basename(input_folder_dir)}"
     print(f"Input directory: {input_folder_dir}")
     print(f"Output directory: {output_folder_dir}")
@@ -51,8 +45,9 @@ def czi_to_tiff():
     img_list = [str(i).replace("\\", "/") for i in img_list]
 
     if len(img_list) == 0:
-        folder_img_num.set(f"From {input_folder_dir}\n" +
-                       f"No images found.")
+        error_message = f"From {input_folder_dir}\nNo images found."
+        print(error_message)
+        folder_img_num.set(error_message)
         return 0
 
     if not os.path.isdir(output_folder_dir):
@@ -68,8 +63,9 @@ def czi_to_tiff():
     )
     print("Image conversion czi_to_tiff() finished.")
 
+
 def run_nbt():
-    input_folder_dir = folder_path.get()
+    #input_folder_dir = folder_path.get()
     output_folder_dir = f"{os.path.dirname(input_folder_dir)}/OUT_{os.path.basename(input_folder_dir)}"
     print(f"Input directory: {input_folder_dir}")
     print(f"Output directory: {output_folder_dir}")
@@ -103,7 +99,7 @@ if __name__ == "__main__":
     ############################################################################
     root = tk.Tk()
     root.title("NBT staining intensity")
-    root.geometry("600x400")
+    root.geometry("500x400")
     title_label = tk.Label(root, text="NBT intensity", font=("Calibri 24 bold")).pack(pady=5)
     #root.iconphoto(False, tk.PhotoImage(file = "icon.png"))
     root.iconbitmap(resource_path("icon.ico"))
@@ -146,7 +142,7 @@ if __name__ == "__main__":
         text="Convert .czi to .tiff",
         font="Calibri 16",
         relief= "ridge",
-        #cursor="exchange",
+        cursor="exchange",
         command=czi_to_tiff,
     ).pack(padx=10, pady=5, anchor="center", fill="x")
 
